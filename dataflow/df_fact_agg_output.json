@@ -1,0 +1,38 @@
+{
+	"name": "df_fact_agg_output",
+	"properties": {
+		"folder": {
+			"name": "dw_demo_df"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "Fact_ProductSales",
+						"type": "DatasetReference"
+					},
+					"name": "SrcFactProductSales"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "SumByDateProduct",
+						"type": "DatasetReference"
+					},
+					"name": "tgtAggFile"
+				}
+			],
+			"transformations": [
+				{
+					"name": "Aggregate"
+				},
+				{
+					"name": "Select"
+				}
+			],
+			"script": "source(output(\n\t\tTransactionId as long,\n\t\tSalesInvoiceNumber as integer,\n\t\tSalesDateKey as integer,\n\t\tSalesTimeKey as integer,\n\t\tSalesTimeAltKey as integer,\n\t\tStoreID as integer,\n\t\tCustomerID as integer,\n\t\tProductID as integer,\n\t\tSalesPersonID as integer,\n\t\tQuantity as double,\n\t\tSalesTotalCost as decimal(19,4),\n\t\tProductActualCost as decimal(19,4),\n\t\tDeviation as double\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinferDriftedColumnTypes: true,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> SrcFactProductSales\nSrcFactProductSales aggregate(groupBy(SalesDateKey,\n\t\tProductID),\n\tQuantity = count(Quantity)) ~> Aggregate\nAggregate select(mapColumn(\n\t\tSalesDateKey,\n\t\tProductID,\n\t\tQuantity\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select\nSelect sink(input(\n\t\tColumn_1 as string,\n\t\tColumn_2 as string,\n\t\tColumn_3 as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['fact_agg_output.csv'],\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> tgtAggFile"
+		}
+	}
+}

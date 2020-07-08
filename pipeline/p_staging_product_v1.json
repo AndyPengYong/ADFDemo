@@ -1,0 +1,142 @@
+{
+	"name": "p_staging_product_v1",
+	"properties": {
+		"activities": [
+			{
+				"name": "df_staging_product",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "df_staging_product",
+						"type": "DataFlowReference"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					}
+				}
+			},
+			{
+				"name": "usp_UpdateErrorLogTable",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "df_staging_product",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[dbo].[usp_UpdateErrorLogTable]",
+					"storedProcedureParameters": {
+						"ActivityID": {
+							"value": {
+								"value": "@activity('df_staging_product').ActivityRunId",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"ActivityName": {
+							"value": "df_staging_product",
+							"type": "String"
+						},
+						"ActivityStartTime": {
+							"value": {
+								"value": "@activity('df_staging_product').ExecutionStartTime",
+								"type": "Expression"
+							},
+							"type": "DateTime"
+						},
+						"BatchID": {
+							"value": {
+								"value": "@pipeline().RunId",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"ErrorCode": {
+							"value": {
+								"value": "@activity('df_staging_product').StatusCode",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"ErrorDescription": {
+							"value": {
+								"value": "@activity('df_staging_product').Error.Message",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"ErrorLoggedTime": {
+							"value": {
+								"value": "@utcnow()",
+								"type": "Expression"
+							},
+							"type": "DateTime"
+						},
+						"FailureType": {
+							"value": {
+								"value": "@activity('df_staging_product').error.Code",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"PipelineID": {
+							"value": {
+								"value": "@pipeline().RunId",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"PipelineName": {
+							"value": {
+								"value": "@pipeline().Pipeline",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"PipelineStartTime": {
+							"value": {
+								"value": "@pipeline().TriggerTime",
+								"type": "Expression"
+							},
+							"type": "DateTime"
+						},
+						"Source": {
+							"value": "AzureSQLDatabase",
+							"type": "String"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "Link_AzureSqlDatabase",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"folder": {
+			"name": "dw_demo"
+		},
+		"annotations": []
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,35 @@
+{
+	"name": "df_staging_salesperson_demo",
+	"properties": {
+		"folder": {
+			"name": "dw_demo_df"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "SalesPerson",
+						"type": "DatasetReference"
+					},
+					"name": "srcSalesPerson"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "Stg_SalesPerson",
+						"type": "DatasetReference"
+					},
+					"name": "tgtSalesPerson"
+				}
+			],
+			"transformations": [
+				{
+					"name": "DerivedColumn"
+				}
+			],
+			"script": "source(output(\n\t\tSalesPersonAltID as string,\n\t\tSalesPersonName as string,\n\t\tStoreID as string,\n\t\tCity as string,\n\t\tState as string,\n\t\tCountry as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinferDriftedColumnTypes: true) ~> srcSalesPerson\nsrcSalesPerson derive(CreatedBy = 'Andy Peng') ~> DerivedColumn\nDerivedColumn sink(input(\n\t\tSalesPersonAltID as string,\n\t\tSalesPersonName as string,\n\t\tStoreAltID as string,\n\t\tCity as string,\n\t\tState as string,\n\t\tCountry as string,\n\t\tCreatedBy as string,\n\t\tCreatedDate as date,\n\t\tUpdatedBy as string,\n\t\tUpdatedDate as date\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\ttruncate:true,\n\tformat: 'table',\n\tmapColumn(\n\t\tSalesPersonAltID,\n\t\tSalesPersonName,\n\t\tStoreAltID = StoreID,\n\t\tCity,\n\t\tState,\n\t\tCountry,\n\t\tCreatedBy\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> tgtSalesPerson"
+		}
+	}
+}

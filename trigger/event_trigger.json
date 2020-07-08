@@ -1,0 +1,26 @@
+{
+	"name": "event_trigger",
+	"properties": {
+		"description": "an event trigger within the Azure Data Factory",
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "p_staging_product",
+					"type": "PipelineReference"
+				}
+			}
+		],
+		"type": "BlobEventsTrigger",
+		"typeProperties": {
+			"blobPathBeginsWith": "/dwhcontainerbackup/blobs/",
+			"blobPathEndsWith": ".trigger",
+			"ignoreEmptyBlobs": false,
+			"scope": "/subscriptions/8aef670e-29f9-44b0-aa26-cada548d8728/resourceGroups/etl-ds-grp/providers/Microsoft.Storage/storageAccounts/demodwh",
+			"events": [
+				"Microsoft.Storage.BlobCreated"
+			]
+		}
+	}
+}

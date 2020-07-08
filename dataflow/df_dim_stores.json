@@ -1,0 +1,44 @@
+{
+	"name": "df_dim_stores",
+	"properties": {
+		"folder": {
+			"name": "dw_demo_df"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "Stg_Stores",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "Dim_Stores",
+						"type": "DatasetReference"
+					},
+					"name": "TgtDimStores"
+				}
+			],
+			"transformations": [
+				{
+					"name": "Select"
+				},
+				{
+					"name": "DerivedColumn"
+				},
+				{
+					"name": "Filter"
+				},
+				{
+					"name": "SurrogateKey1"
+				}
+			],
+			"script": "parameters{\n\tpar_df_windowStartTime as string,\n\tpar_df_windowEndTime as string\n}\nsource(output(\n\t\tStoreAltID as string,\n\t\tStoreName as string,\n\t\tStoreLocation as string,\n\t\tCity as string,\n\t\tState as string,\n\t\tCountry as string,\n\t\tCreatedBy as string,\n\t\tCreatedDate as date,\n\t\tUpdatedBy as string,\n\t\tUpdatedDate as date\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> source1\nFilter select(mapColumn(\n\t\tStoreAltID,\n\t\tStoreName,\n\t\tStoreLocation,\n\t\tCity,\n\t\tState,\n\t\tCountry,\n\t\tUpdatedDate\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select\nsource1 derive(window_StartDate = $par_df_windowStartTime,\n\t\twindow_EndDate = $par_df_windowEndTime) ~> DerivedColumn\nDerivedColumn filter(UpdatedDate>=toDate($par_df_windowStartTime)) ~> Filter\nSelect keyGenerate(output(StoreID as long),\n\tstartAt: 1L) ~> SurrogateKey1\nSurrogateKey1 sink(input(\n\t\tStoreID as integer,\n\t\tStoreAltID as string,\n\t\tStoreName as string,\n\t\tStoreLocation as string,\n\t\tCity as string,\n\t\tState as string,\n\t\tCountry as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\ttruncate:true,\n\tformat: 'table',\n\tpreSQLs:['SET IDENTITY_INSERT [dbo].[DIM_STORES]  ON'],\n\tpostSQLs:['SET IDENTITY_INSERT [dbo].[DIM_STORES]  OFF'],\n\tmapColumn(\n\t\tStoreAltID,\n\t\tStoreName,\n\t\tStoreLocation,\n\t\tCity,\n\t\tState,\n\t\tCountry,\n\t\tStoreID\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> TgtDimStores"
+		}
+	}
+}

@@ -1,0 +1,78 @@
+{
+	"name": "df_fact_product_sales",
+	"properties": {
+		"folder": {
+			"name": "dw_demo_df"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ProductSale",
+						"type": "DatasetReference"
+					},
+					"name": "ProductSale"
+				},
+				{
+					"dataset": {
+						"referenceName": "Dim_Stores",
+						"type": "DatasetReference"
+					},
+					"name": "DimStores"
+				},
+				{
+					"dataset": {
+						"referenceName": "Dim_Customer",
+						"type": "DatasetReference"
+					},
+					"name": "lkpDimCustomer"
+				},
+				{
+					"dataset": {
+						"referenceName": "Dim_Product",
+						"type": "DatasetReference"
+					},
+					"name": "lkpDimProduct"
+				},
+				{
+					"dataset": {
+						"referenceName": "Dim_SalesPerson",
+						"type": "DatasetReference"
+					},
+					"name": "lkpDimSalesPerson"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "Fact_ProductSales",
+						"type": "DatasetReference"
+					},
+					"name": "trgFactProductSales"
+				}
+			],
+			"transformations": [
+				{
+					"name": "LeftJoinDimStoresStream"
+				},
+				{
+					"name": "lkpDimCustomerStream"
+				},
+				{
+					"name": "lkpDimProductStream"
+				},
+				{
+					"name": "lkpDimSalesPersonStream"
+				},
+				{
+					"name": "SelectStream"
+				},
+				{
+					"name": "SurrogateKey"
+				}
+			],
+			"script": "source(output(\n\t\tTransactionId as string,\n\t\tSalesInvoiceNumber as string,\n\t\tSalesDateKey as string,\n\t\tStoreAltID as string,\n\t\tCustomerAltID as string,\n\t\tProductAltKey as string,\n\t\tSalesPersonAltID as string,\n\t\tQuantity as string,\n\t\tSalesTotalCost as string,\n\t\tProductActualCost as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinferDriftedColumnTypes: true) ~> ProductSale\nsource(output(\n\t\tStoreID as integer,\n\t\tStoreAltID as string,\n\t\tStoreName as string,\n\t\tStoreLocation as string,\n\t\tCity as string,\n\t\tState as string,\n\t\tCountry as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> DimStores\nsource(output(\n\t\tCustomerID as integer,\n\t\tCustomerAltID as string,\n\t\tCustomerName as string,\n\t\tGender as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinferDriftedColumnTypes: true,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> lkpDimCustomer\nsource(output(\n\t\tProductKey as integer,\n\t\tProductAltKey as string,\n\t\tProductName as string,\n\t\tProductActualCost as decimal(19,4),\n\t\tProductSalesCost as decimal(19,4)\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> lkpDimProduct\nsource(output(\n\t\tSalesPersonID as integer,\n\t\tSalesPersonAltID as string,\n\t\tSalesPersonName as string,\n\t\tStoreID as integer,\n\t\tCity as string,\n\t\tState as string,\n\t\tCountry as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> lkpDimSalesPerson\nProductSale, DimStores join(ProductSale@StoreAltID == DimStores@StoreAltID,\n\tjoinType:'left',\n\tbroadcast: 'auto')~> LeftJoinDimStoresStream\nLeftJoinDimStoresStream, lkpDimCustomer lookup(ProductSale@CustomerAltID == lkpDimCustomer@CustomerAltID,\n\tmultiple: false,\n\tpickup: 'first',\n\tasc(CustomerID, true),\n\tbroadcast: 'auto')~> lkpDimCustomerStream\nlkpDimCustomerStream, lkpDimProduct lookup(ProductSale@ProductAltKey == lkpDimProduct@ProductAltKey,\n\tmultiple: false,\n\tpickup: 'first',\n\tasc(ProductKey, true),\n\tbroadcast: 'auto')~> lkpDimProductStream\nlkpDimProductStream, lkpDimSalesPerson lookup(ProductSale@SalesPersonAltID == lkpDimSalesPerson@SalesPersonAltID,\n\tmultiple: false,\n\tpickup: 'first',\n\tasc(lkpDimSalesPerson@SalesPersonAltID, true),\n\tbroadcast: 'auto')~> lkpDimSalesPersonStream\nlkpDimSalesPersonStream select(mapColumn(\n\t\tSalesInvoiceNumber,\n\t\tSalesDateKey,\n\t\tStoreID = {DimStores@StoreID},\n\t\tCustomerID,\n\t\tProductID = ProductKey,\n\t\tSalesPersonID,\n\t\tQuantity,\n\t\tSalesTotalCost,\n\t\tProductActualCost = ProductSalesCost\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectStream\nSelectStream keyGenerate(output(TransactionId as long),\n\tstartAt: 1L) ~> SurrogateKey\nSurrogateKey sink(input(\n\t\tTransactionId as long,\n\t\tSalesInvoiceNumber as integer,\n\t\tSalesDateKey as integer,\n\t\tSalesTimeKey as integer,\n\t\tSalesTimeAltKey as integer,\n\t\tStoreID as integer,\n\t\tCustomerID as integer,\n\t\tProductID as integer,\n\t\tSalesPersonID as integer,\n\t\tQuantity as double,\n\t\tSalesTotalCost as decimal(19,4),\n\t\tProductActualCost as decimal(19,4),\n\t\tDeviation as double\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\ttruncate:true,\n\tformat: 'table',\n\tpreSQLs:['SET IDENTITY_INSERT [dbo].[Fact_ProductSales]  ON'],\n\tpostSQLs:['SET IDENTITY_INSERT [dbo].[Fact_ProductSales]  OFF'],\n\tmapColumn(\n\t\tTransactionId,\n\t\tSalesInvoiceNumber,\n\t\tSalesDateKey,\n\t\tStoreID,\n\t\tCustomerID,\n\t\tProductID,\n\t\tSalesPersonID,\n\t\tQuantity,\n\t\tSalesTotalCost,\n\t\tProductActualCost\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> trgFactProductSales"
+		}
+	}
+}

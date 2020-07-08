@@ -1,0 +1,22 @@
+{
+	"name": "table_list",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "Link_AzureSqlDatabase",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "table_name",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "dummyName"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

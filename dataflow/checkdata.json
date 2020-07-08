@@ -1,0 +1,55 @@
+{
+	"name": "checkdata",
+	"properties": {
+		"folder": {
+			"name": "etl_ds_dataflow"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "inputdata",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "goodresult",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				},
+				{
+					"dataset": {
+						"referenceName": "badresult",
+						"type": "DatasetReference"
+					},
+					"name": "sink2"
+				},
+				{
+					"dataset": {
+						"referenceName": "output_db",
+						"type": "DatasetReference"
+					},
+					"name": "sink3"
+				}
+			],
+			"transformations": [
+				{
+					"name": "ConditionalSplit1"
+				},
+				{
+					"name": "Aggregate1"
+				},
+				{
+					"name": "Union1"
+				}
+			],
+			"script": "source(output(\n\t\tF01 as string,\n\t\tF02 as string,\n\t\tF03 as string,\n\t\tF04 as string,\n\t\tF05 as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> source1\nsource1 split(length(F01)<=4,\n\tdisjoint: false) ~> ConditionalSplit1@(GoodRow, BadRow)\nsource1 aggregate(groupBy(F01),\n\tF02 = max(F02),\n\t\tF03 = max(F03),\n\t\tF04 = min(F04),\n\t\tF05 = min(F05)) ~> Aggregate1\nAggregate1, ConditionalSplit1@GoodRow union(byName: true)~> Union1\nConditionalSplit1@GoodRow sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['goodresult.csv'],\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink1\nConditionalSplit1@BadRow sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['badresult.csv'],\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink2\nUnion1 sink(input(\n\t\tF1 as string,\n\t\tF2 as string,\n\t\tF3 as string,\n\t\tF4 as string,\n\t\tF5 as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tpostSQLs:['delete from checkdata_output where F1=\\'A1021\\''],\n\tmapColumn(\n\t\tF1 = F01,\n\t\tF2 = F02,\n\t\tF3 = F03,\n\t\tF4 = F04,\n\t\tF5 = F05\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink3"
+		}
+	}
+}

@@ -1,0 +1,48 @@
+{
+	"name": "p_delete_activity",
+	"properties": {
+		"activities": [
+			{
+				"name": "Delete_Activity",
+				"type": "Delete",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "Delete Activity",
+						"value": "Delete customer file from dwhcontainerbackup container."
+					}
+				],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "CustomerDelete",
+						"type": "DatasetReference"
+					},
+					"logStorageSettings": {
+						"linkedServiceName": {
+							"referenceName": "Link_AzureBlobStorage",
+							"type": "LinkedServiceReference"
+						},
+						"path": "dwhcontainerbackup"
+					},
+					"enableLogging": true,
+					"storeSettings": {
+						"type": "AzureBlobStorageReadSettings",
+						"recursive": true
+					}
+				}
+			}
+		],
+		"folder": {
+			"name": "dw_demo"
+		},
+		"annotations": []
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

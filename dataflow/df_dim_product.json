@@ -1,0 +1,48 @@
+{
+	"name": "df_dim_product",
+	"properties": {
+		"folder": {
+			"name": "dw_demo_df"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "Stg_Product",
+						"type": "DatasetReference"
+					},
+					"name": "StgProduct"
+				},
+				{
+					"dataset": {
+						"referenceName": "Dim_Product",
+						"type": "DatasetReference"
+					},
+					"name": "DimProduct"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "Dim_Product",
+						"type": "DatasetReference"
+					},
+					"name": "OutDimProduct"
+				}
+			],
+			"transformations": [
+				{
+					"name": "Exists"
+				},
+				{
+					"name": "Select"
+				},
+				{
+					"name": "AlterRowUpdate"
+				}
+			],
+			"script": "source(output(\n\t\tProductAltKey as string,\n\t\tProductName as string,\n\t\tProductActualCost as decimal(19,4),\n\t\tProductSalesCost as decimal(19,4),\n\t\tA as string,\n\t\tB as string,\n\t\tC as decimal(19,4),\n\t\tD as decimal(19,4),\n\t\tE as string,\n\t\tF as string,\n\t\tG as decimal(19,4),\n\t\tH as decimal(19,4),\n\t\tI as string,\n\t\tJ as string,\n\t\tK as decimal(19,4),\n\t\tM as decimal(19,4)\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tquery: 'SELECT \\n[ProductAltKey],\\n\t[ProductName],\\n\t[ProductActualCost],\\n\t[ProductSalesCost] ,\\n   [ProductAltKey] as A,\\n\t[ProductName] AS B,\\n\t[ProductActualCost] AS C,\\n\t[ProductSalesCost] as D,\\n   [ProductAltKey] as E,\\n\t[ProductName] AS F,\\n\t[ProductActualCost] AS G,\\n\t[ProductSalesCost] as H,\\n   [ProductAltKey] as I,\\n\t[ProductName] AS J,\\n\t[ProductActualCost] AS K,\\n\t[ProductSalesCost] as M\\nFROM [dbo].[Stg_Product]',\n\tformat: 'query') ~> StgProduct\nsource(output(\n\t\tProductKey as integer,\n\t\tProductAltKey as string,\n\t\tProductName as string,\n\t\tProductActualCost as decimal(19,4),\n\t\tProductSalesCost as decimal(19,4)\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> DimProduct\nStgProduct, DimProduct exists(StgProduct@ProductAltKey == DimProduct@ProductAltKey,\n\tnegate:false,\n\tbroadcast: 'auto')~> Exists\nExists select(mapColumn(\n\t\tProductAltKey,\n\t\tProductName,\n\t\tProductActualCost,\n\t\tProductSalesCost\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select\nSelect alterRow(updateIf(ProductAltKey=='ITM-002')) ~> AlterRowUpdate\nAlterRowUpdate sink(input(\n\t\tProductKey as integer,\n\t\tProductAltKey as string,\n\t\tProductName as string,\n\t\tProductActualCost as decimal(19,4),\n\t\tProductSalesCost as decimal(19,4)\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:true,\n\tupsertable:false,\n\tkeys:['ProductAltKey'],\n\tformat: 'table',\n\tmapColumn(\n\t\tProductAltKey,\n\t\tProductName,\n\t\tProductActualCost,\n\t\tProductSalesCost\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> OutDimProduct"
+		}
+	}
+}

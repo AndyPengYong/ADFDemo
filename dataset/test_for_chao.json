@@ -1,0 +1,35 @@
+{
+	"name": "test_for_chao",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorageDemo",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"tableName": {
+				"type": "string",
+				"defaultValue": "''"
+			}
+		},
+		"folder": {
+			"name": "ds_for_bi"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": {
+					"value": "@dataset().tableName",
+					"type": "Expression"
+				},
+				"container": "etl-ds-storage"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"quoteChar": "\""
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

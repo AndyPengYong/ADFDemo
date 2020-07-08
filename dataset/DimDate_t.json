@@ -1,0 +1,29 @@
+{
+	"name": "DimDate_t",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDatabaseDemo",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"tableName": {
+				"type": "string",
+				"defaultValue": "''"
+			}
+		},
+		"folder": {
+			"name": "ds_for_bi"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": {
+				"value": "@dataset().tableName",
+				"type": "Expression"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

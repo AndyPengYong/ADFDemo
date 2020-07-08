@@ -1,0 +1,44 @@
+{
+	"name": "p_filter_activity",
+	"properties": {
+		"activities": [
+			{
+				"name": "FilterActivity",
+				"type": "Filter",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@pipeline().parameters.ListOfvalues",
+						"type": "Expression"
+					},
+					"condition": {
+						"value": "@greater(Item(),5)",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"ListOfvalues": {
+				"type": "array",
+				"defaultValue": [
+					1,
+					2,
+					3,
+					4,
+					5,
+					6,
+					7,
+					8,
+					9
+				]
+			}
+		},
+		"folder": {
+			"name": "dw_demo"
+		},
+		"annotations": []
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

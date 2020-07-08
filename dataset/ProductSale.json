@@ -1,0 +1,68 @@
+{
+	"name": "ProductSale",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "Link_AzureBlobStorage",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "dw_demo_files"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "ProductSale.csv",
+				"container": "dwhcontainer"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "TransactionId",
+				"type": "String"
+			},
+			{
+				"name": "SalesInvoiceNumber",
+				"type": "String"
+			},
+			{
+				"name": "SalesDateKey",
+				"type": "String"
+			},
+			{
+				"name": "StoreAltID",
+				"type": "String"
+			},
+			{
+				"name": "CustomerAltID",
+				"type": "String"
+			},
+			{
+				"name": "ProductAltKey",
+				"type": "String"
+			},
+			{
+				"name": "SalesPersonAltID",
+				"type": "String"
+			},
+			{
+				"name": "Quantity",
+				"type": "String"
+			},
+			{
+				"name": "SalesTotalCost",
+				"type": "String"
+			},
+			{
+				"name": "ProductActualCost",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,61 @@
+{
+	"name": "Stg_SalesPerson",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "Link_AzureSqlDatabase",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "dw_demo_tables"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "SalesPersonAltID",
+				"type": "varchar"
+			},
+			{
+				"name": "SalesPersonName",
+				"type": "varchar"
+			},
+			{
+				"name": "StoreAltID",
+				"type": "varchar"
+			},
+			{
+				"name": "City",
+				"type": "varchar"
+			},
+			{
+				"name": "State",
+				"type": "varchar"
+			},
+			{
+				"name": "Country",
+				"type": "varchar"
+			},
+			{
+				"name": "CreatedBy",
+				"type": "varchar"
+			},
+			{
+				"name": "CreatedDate",
+				"type": "date"
+			},
+			{
+				"name": "UpdatedBy",
+				"type": "varchar"
+			},
+			{
+				"name": "UpdatedDate",
+				"type": "date"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "Stg_SalesPerson"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

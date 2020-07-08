@@ -1,0 +1,41 @@
+{
+	"name": "output_db",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "Link_AzureSqlDatabase",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "etl_ds_datasets"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "F1",
+				"type": "varchar"
+			},
+			{
+				"name": "F2",
+				"type": "varchar"
+			},
+			{
+				"name": "F3",
+				"type": "varchar"
+			},
+			{
+				"name": "F4",
+				"type": "varchar"
+			},
+			{
+				"name": "F5",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "checkdata_output"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

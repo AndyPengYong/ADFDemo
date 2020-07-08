@@ -1,0 +1,228 @@
+{
+	"name": "Dim_Date",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "Link_AzureSqlDatabase",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "dw_demo_tables"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "DateKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Date",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "FullDateUK",
+				"type": "char"
+			},
+			{
+				"name": "FullDateUSA",
+				"type": "char"
+			},
+			{
+				"name": "DayOfMonth",
+				"type": "varchar"
+			},
+			{
+				"name": "DaySuffix",
+				"type": "varchar"
+			},
+			{
+				"name": "DayName",
+				"type": "varchar"
+			},
+			{
+				"name": "DayOfWeekUSA",
+				"type": "char"
+			},
+			{
+				"name": "DayOfWeekUK",
+				"type": "char"
+			},
+			{
+				"name": "DayOfWeekInMonth",
+				"type": "varchar"
+			},
+			{
+				"name": "DayOfWeekInYear",
+				"type": "varchar"
+			},
+			{
+				"name": "DayOfQuarter",
+				"type": "varchar"
+			},
+			{
+				"name": "DayOfYear",
+				"type": "varchar"
+			},
+			{
+				"name": "WeekOfMonth",
+				"type": "varchar"
+			},
+			{
+				"name": "WeekOfQuarter",
+				"type": "varchar"
+			},
+			{
+				"name": "WeekOfYear",
+				"type": "varchar"
+			},
+			{
+				"name": "Month",
+				"type": "varchar"
+			},
+			{
+				"name": "MonthName",
+				"type": "varchar"
+			},
+			{
+				"name": "MonthOfQuarter",
+				"type": "varchar"
+			},
+			{
+				"name": "Quarter",
+				"type": "char"
+			},
+			{
+				"name": "QuarterName",
+				"type": "varchar"
+			},
+			{
+				"name": "Year",
+				"type": "char"
+			},
+			{
+				"name": "YearName",
+				"type": "char"
+			},
+			{
+				"name": "MonthYear",
+				"type": "char"
+			},
+			{
+				"name": "MMYYYY",
+				"type": "char"
+			},
+			{
+				"name": "FirstDayOfMonth",
+				"type": "date"
+			},
+			{
+				"name": "LastDayOfMonth",
+				"type": "date"
+			},
+			{
+				"name": "FirstDayOfQuarter",
+				"type": "date"
+			},
+			{
+				"name": "LastDayOfQuarter",
+				"type": "date"
+			},
+			{
+				"name": "FirstDayOfYear",
+				"type": "date"
+			},
+			{
+				"name": "LastDayOfYear",
+				"type": "date"
+			},
+			{
+				"name": "IsHolidayUSA",
+				"type": "bit"
+			},
+			{
+				"name": "IsWeekday",
+				"type": "bit"
+			},
+			{
+				"name": "HolidayUSA",
+				"type": "varchar"
+			},
+			{
+				"name": "IsHolidayUK",
+				"type": "bit"
+			},
+			{
+				"name": "HolidayUK",
+				"type": "varchar"
+			},
+			{
+				"name": "FiscalDayOfYear",
+				"type": "varchar"
+			},
+			{
+				"name": "FiscalWeekOfYear",
+				"type": "varchar"
+			},
+			{
+				"name": "FiscalMonth",
+				"type": "varchar"
+			},
+			{
+				"name": "FiscalQuarter",
+				"type": "char"
+			},
+			{
+				"name": "FiscalQuarterName",
+				"type": "varchar"
+			},
+			{
+				"name": "FiscalYear",
+				"type": "char"
+			},
+			{
+				"name": "FiscalYearName",
+				"type": "char"
+			},
+			{
+				"name": "FiscalMonthYear",
+				"type": "char"
+			},
+			{
+				"name": "FiscalMMYYYY",
+				"type": "char"
+			},
+			{
+				"name": "FiscalFirstDayOfMonth",
+				"type": "date"
+			},
+			{
+				"name": "FiscalLastDayOfMonth",
+				"type": "date"
+			},
+			{
+				"name": "FiscalFirstDayOfQuarter",
+				"type": "date"
+			},
+			{
+				"name": "FiscalLastDayOfQuarter",
+				"type": "date"
+			},
+			{
+				"name": "FiscalFirstDayOfYear",
+				"type": "date"
+			},
+			{
+				"name": "FiscalLastDayOfYear",
+				"type": "date"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "Dim_Date"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,88 @@
+{
+	"name": "Fact_ProductSales",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "Link_AzureSqlDatabase",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "dw_demo_tables"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "TransactionId",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "SalesInvoiceNumber",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "SalesDateKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "SalesTimeKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "SalesTimeAltKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "StoreID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "CustomerID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ProductID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "SalesPersonID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Quantity",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "SalesTotalCost",
+				"type": "money",
+				"precision": 19,
+				"scale": 4
+			},
+			{
+				"name": "ProductActualCost",
+				"type": "money",
+				"precision": 19,
+				"scale": 4
+			},
+			{
+				"name": "Deviation",
+				"type": "float",
+				"precision": 15
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "Fact_ProductSales"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

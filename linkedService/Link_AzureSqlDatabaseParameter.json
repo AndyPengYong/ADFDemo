@@ -1,0 +1,22 @@
+{
+	"name": "Link_AzureSqlDatabaseParameter",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"parameters": {
+			"dbName": {
+				"type": "string"
+			},
+			"userName": {
+				"type": "string"
+			},
+			"passWord": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "AzureSqlDatabase",
+		"typeProperties": {
+			"connectionString": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=etl-ds-dbsrv.database.windows.net;Initial Catalog=@{linkedService().dbName};User ID=@{linkedService().userName};Password=@{linkedService().passWord}"
+		}
+	}
+}

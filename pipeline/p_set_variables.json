@@ -1,0 +1,35 @@
+{
+	"name": "p_set_variables",
+	"properties": {
+		"activities": [
+			{
+				"name": "Set variable",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "FileNameVar",
+					"value": {
+						"value": "@pipeline().parameters.FileNamePar",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"FileNamePar": {
+				"type": "string"
+			}
+		},
+		"variables": {
+			"FileNameVar": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "dw_demo"
+		},
+		"annotations": []
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

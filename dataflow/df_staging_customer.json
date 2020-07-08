@@ -1,0 +1,35 @@
+{
+	"name": "df_staging_customer",
+	"properties": {
+		"folder": {
+			"name": "dw_demo_df"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "Customer",
+						"type": "DatasetReference"
+					},
+					"name": "CustomerFile"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "Stg_Customer",
+						"type": "DatasetReference"
+					},
+					"name": "StgCustomer"
+				}
+			],
+			"transformations": [
+				{
+					"name": "AlterRowStgCustomer"
+				}
+			],
+			"script": "source(output(\n\t\tCustomerAltID as string,\n\t\tCustomerName as string,\n\t\tGender as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tlimit: 100,\n\tpartitionBy('hash', 1)) ~> CustomerFile\nCustomerFile alterRow(upsertIf(true())) ~> AlterRowStgCustomer\nAlterRowStgCustomer sink(input(\n\t\tCustomerAltID as string,\n\t\tCustomerName as string,\n\t\tGender as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:true,\n\tkeys:['CustomerAltID'],\n\tformat: 'table',\n\tmapColumn(\n\t\tCustomerAltID,\n\t\tCustomerName,\n\t\tGender\n\t),\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> StgCustomer"
+		}
+	}
+}

@@ -1,0 +1,35 @@
+{
+	"name": "df_dim_customer",
+	"properties": {
+		"folder": {
+			"name": "dw_demo_df"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "Stg_Customer",
+						"type": "DatasetReference"
+					},
+					"name": "StgCustomer"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "Dim_Customer",
+						"type": "DatasetReference"
+					},
+					"name": "OutDimCustomer"
+				}
+			],
+			"transformations": [
+				{
+					"name": "AlterRow1"
+				}
+			],
+			"script": "source(output(\n\t\tCustomerAltID as string,\n\t\tCustomerName as string,\n\t\tGender as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> StgCustomer\nStgCustomer alterRow(upsertIf(true())) ~> AlterRow1\nAlterRow1 sink(input(\n\t\tCustomerID as integer,\n\t\tCustomerAltID as string,\n\t\tCustomerName as string,\n\t\tGender as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:true,\n\tkeys:['CustomerAltID'],\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> OutDimCustomer"
+		}
+	}
+}

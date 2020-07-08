@@ -1,0 +1,35 @@
+{
+	"name": "df_staging_product",
+	"properties": {
+		"folder": {
+			"name": "dw_demo_df"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "Product",
+						"type": "DatasetReference"
+					},
+					"name": "ProductFile"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "Stg_Product",
+						"type": "DatasetReference"
+					},
+					"name": "OutStgProduct"
+				}
+			],
+			"transformations": [
+				{
+					"name": "AlterRow1"
+				}
+			],
+			"script": "source(output(\n\t\tProductAltKey as string,\n\t\tProductName as string,\n\t\tProductActualCost as string,\n\t\tProductSalesCost as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> ProductFile\nProductFile alterRow(upsertIf(true())) ~> AlterRow1\nAlterRow1 sink(input(\n\t\tProductAltKey as string,\n\t\tProductName as string,\n\t\tProductActualCost as decimal(19,4),\n\t\tProductSalesCost as decimal(19,4)\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: true,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:true,\n\tkeys:['ProductAltKey'],\n\tformat: 'table',\n\tmapColumn(\n\t\tProductAltKey,\n\t\tProductName,\n\t\tProductActualCost,\n\t\tProductSalesCost\n\t),\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> OutStgProduct"
+		}
+	}
+}

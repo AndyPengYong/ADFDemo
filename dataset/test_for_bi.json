@@ -1,0 +1,41 @@
+{
+	"name": "test_for_bi",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorageDemo",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "ds_for_bi"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"container": "etl-ds-storage"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"type": "String"
+			},
+			{
+				"type": "String"
+			},
+			{
+				"type": "String"
+			},
+			{
+				"type": "String"
+			},
+			{
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

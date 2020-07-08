@@ -1,0 +1,58 @@
+{
+	"name": "Dim_Table_Parameter",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "Link_AzureSqlDatabaseParameter",
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"dbName": {
+					"value": "@dataset().dbName",
+					"type": "Expression"
+				},
+				"userName": {
+					"value": "@dataset().userName",
+					"type": "Expression"
+				},
+				"passWord": {
+					"value": "@dataset().passWord",
+					"type": "Expression"
+				}
+			}
+		},
+		"parameters": {
+			"dbName": {
+				"type": "string"
+			},
+			"userName": {
+				"type": "string"
+			},
+			"passWord": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "dw_demo_tables"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "CustomerAltID",
+				"type": "varchar"
+			},
+			{
+				"name": "CustomerName",
+				"type": "varchar"
+			},
+			{
+				"name": "Gender",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "Dim_Customer"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

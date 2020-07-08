@@ -1,0 +1,48 @@
+{
+	"name": "inputdata",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "Link_AzureBlobStorage",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "etl_ds_datasets"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "datacheck.csv",
+				"container": "etl-ds-storage"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "/",
+			"firstRowAsHeader": false,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "A101",
+				"type": "String"
+			},
+			{
+				"name": "B101",
+				"type": "String"
+			},
+			{
+				"name": "C101",
+				"type": "String"
+			},
+			{
+				"name": "D101",
+				"type": "String"
+			},
+			{
+				"name": "E101",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

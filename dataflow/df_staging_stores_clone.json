@@ -1,0 +1,41 @@
+{
+	"name": "df_staging_stores_clone",
+	"properties": {
+		"folder": {
+			"name": "dw_demo_df"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "Store",
+						"type": "DatasetReference"
+					},
+					"name": "StoreFile"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "Stg_Stores",
+						"type": "DatasetReference"
+					},
+					"name": "OutStgStores"
+				}
+			],
+			"transformations": [
+				{
+					"name": "FilterByStoreAltID"
+				},
+				{
+					"name": "DerivedColumnCreatedBy"
+				},
+				{
+					"name": "AlterRowUpsertIf"
+				}
+			],
+			"script": "parameters{\n\twindowStartTime as date,\n\twindowEndTime as date\n}\nsource(output(\n\t\tStoreAltID as string,\n\t\tStoreName as string,\n\t\tStoreLocation as string,\n\t\tCity as string,\n\t\tState as string,\n\t\tCountry as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> StoreFile\nStoreFile filter(left(StoreAltID,3)=='LOC') ~> FilterByStoreAltID\nFilterByStoreAltID derive(CreatedBy = 'Andy Peng',\n\t\ttriggerWindowStartTime = $windowStartTime,\n\t\ttriggerWindowEndTime = $windowEndTime) ~> DerivedColumnCreatedBy\nDerivedColumnCreatedBy alterRow(upsertIf(true())) ~> AlterRowUpsertIf\nAlterRowUpsertIf sink(input(\n\t\tStoreAltID as string,\n\t\tStoreName as string,\n\t\tStoreLocation as string,\n\t\tCity as string,\n\t\tState as string,\n\t\tCountry as string,\n\t\tCreatedBy as string,\n\t\tCreatedDate as date,\n\t\tUpdatedBy as string,\n\t\tUpdatedDate as date\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:true,\n\tkeys:['StoreAltID'],\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> OutStgStores"
+		}
+	}
+}
